@@ -22,6 +22,8 @@ The Route53 zone must already exists.
 
 ## Examples
 
+### Simple
+
 ```hcl
 resource "aws_route53_zone" "my_website_com" {
   name = "my-website.com"
@@ -32,6 +34,18 @@ module "static-webiste" {
 
   website_host = "example.my-website.com"
   dns_zone     = aws_route53_zone.my_website_com.name
+}
+```
+
+### SPA Application
+
+```hcl
+module "static-webiste" {
+  source = "neovops/static-website/aws"
+
+  website_host = "example.my-website.com"
+  dns_zone     = "my-website.com"
+  redirect_404 = true
 }
 ```
 
@@ -73,6 +87,8 @@ No Modules.
 |------|-------------|------|---------|:--------:|
 | default\_root\_object | Default object for root URL | `string` | `"index.html"` | no |
 | dns\_zone | DNS Zone | `string` | n/a | yes |
+| redirect\_404 | Redirect all 404 requests to `redirect_404_object`. Usefull for SPA applications | `bool` | `false` | no |
+| redirect\_404\_object | Object for 404 redirect. Not used if `redirect_404` is false | `string` | `"index.html"` | no |
 | website\_host | Website Host | `string` | n/a | yes |
 
 ## Outputs

@@ -8,7 +8,7 @@ serve a static website.
 This module creates:
  * a S3 bucket
  * a CloudFront distribution
- * a ACM certificate (in us-east-1 zone)
+ * an ACM certificate (in us-east-1 zone)
  * a route53 record for the website
 
 ## Terraform registry
@@ -27,7 +27,10 @@ This module is available on
 
 ## Providers
 
-No provider.
+| Name | Version |
+|------|---------|
+| aws | >= 3.30.0 |
+| aws.us-east-1 | >= 3.30.0 |
 
 ## Modules
 
@@ -35,11 +38,24 @@ No Modules.
 
 ## Resources
 
-No resources.
+| Name |
+|------|
+| [aws_acm_certificate](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/acm_certificate) |
+| [aws_acm_certificate_validation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/acm_certificate_validation) |
+| [aws_cloudfront_distribution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_distribution) |
+| [aws_cloudfront_origin_access_identity](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudfront_origin_access_identity) |
+| [aws_iam_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) |
+| [aws_route53_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) |
+| [aws_route53_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) |
+| [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) |
+| [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) |
 
 ## Inputs
 
-No input.
+| Name | Description | Type | Default | Required |
+|------|-------------|------|---------|:--------:|
+| dns\_zone | DNS Zone | `string` | n/a | yes |
+| website\_host | Website Host | `string` | n/a | yes |
 
 ## Outputs
 

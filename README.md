@@ -22,7 +22,7 @@ The Route53 zone must already exists.
 
 ## Examples
 
-```
+```hcl
 resource "aws_route53_zone" "my_website_com" {
   name = "my-website.com"
 }
@@ -71,6 +71,7 @@ No Modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
+| default\_root\_object | Default object for root URL | `string` | `"index.html"` | no |
 | dns\_zone | DNS Zone | `string` | n/a | yes |
 | website\_host | Website Host | `string` | n/a | yes |
 

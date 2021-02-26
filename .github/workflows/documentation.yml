@@ -1,0 +1,23 @@
+name: "Documentation"
+
+on: [push]
+
+jobs:
+  terraform:
+    name: "Terraform"
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Generate Documentation
+        id: documentation
+        uses: terraform-docs/gh-actions@v0.6.0
+        with:
+          output-file: README.md
+          output-method: replace
+
+      - name: Check up-to-date
+        env:
+          NUM_CHANGED: ${{ steps.documentation.outputs.num_changed }}
+        run: 'if [ "$NUM_CHANGED" -eq 0 ]; then echo "Documentation up-to-date"; else echo "You must update documentation"i; git diff --cached; exit 1; fi'

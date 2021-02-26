@@ -26,7 +26,7 @@
  *
  * ## Examples
  *
- * ```
+ * ```hcl
  * resource "aws_route53_zone" "my_website_com" {
  *   name = "my-website.com"
  * }
@@ -140,7 +140,7 @@ resource "aws_cloudfront_distribution" "distribution" {
   }
 
   enabled             = true
-  default_root_object = "index.html"
+  default_root_object = var.default_root_object
 
   default_cache_behavior {
     viewer_protocol_policy = "redirect-to-https"

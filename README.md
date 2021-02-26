@@ -16,7 +16,24 @@ This module creates:
 This module is available on
 [terraform registry](https://registry.terraform.io/modules/neovops/static-website/aws/latest).
 
-## Example
+## Requirements
+
+The Route53 zone must already exists.
+
+## Examples
+
+```
+resource "aws_route53_zone" "my_website_com" {
+  name = "my-website.com"
+}
+
+module "static-webiste" {
+  source = "neovops/static-website/aws"
+
+  website_host = "example.my-website.com"
+  dns_zone     = aws_route53_zone.my_website_com.name
+}
+```
 
 ## Requirements
 

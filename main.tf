@@ -26,6 +26,8 @@
  *
  * ## Examples
  *
+ * ### Simple
+ *
  * ```hcl
  * resource "aws_route53_zone" "my_website_com" {
  *   name = "my-website.com"
@@ -39,6 +41,18 @@
  * }
  * ```
  *
+ *
+ * ### SPA Application
+ *
+ * ```hcl
+ * module "static-webiste" {
+ *   source = "neovops/static-website/aws"
+ *
+ *   website_host = "example.my-website.com"
+ *   dns_zone     = "my-website.com"
+ *   redirect_404 = true
+ * }
+ * ```
  */
 
 
@@ -169,6 +183,16 @@ resource "aws_cloudfront_distribution" "distribution" {
     acm_certificate_arn      = aws_acm_certificate.cert.arn
     ssl_support_method       = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
+  }
+
+  dynamic "custom_error_response" {
+    for_each = var.redirect_404 ? [1] : []
+    content {
+      error_code         = 404
+      response_code      = 200
+      response_page_path = var.redirect_404_object
+
+    }
   }
 
   depends_on = [

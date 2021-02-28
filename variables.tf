@@ -23,5 +23,5 @@ variable "redirect_404" {
 variable "redirect_404_object" {
   type        = string
   description = "Object for 404 redirect. Not used if `redirect_404` is false"
-  default     = "index.html"
+  default     = "/index.html"
 }

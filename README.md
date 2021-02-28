@@ -88,7 +88,7 @@ No Modules.
 | default\_root\_object | Default object for root URL | `string` | `"index.html"` | no |
 | dns\_zone | DNS Zone | `string` | n/a | yes |
 | redirect\_404 | Redirect all 404 requests to `redirect_404_object`. Usefull for SPA applications | `bool` | `false` | no |
-| redirect\_404\_object | Object for 404 redirect. Not used if `redirect_404` is false | `string` | `"index.html"` | no |
+| redirect\_404\_object | Object for 404 redirect. Not used if `redirect_404` is false | `string` | `"/index.html"` | no |
 | website\_host | Website Host | `string` | n/a | yes |
 
 ## Outputs

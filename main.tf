@@ -9,7 +9,7 @@
  * This module creates:
  *  * a S3 bucket
  *  * a CloudFront distribution
- *  * an ACM certificate (in us-east-1 zone)
+ *  * an ACM certificate
  *  * a route53 record for the website
  *
  *
@@ -24,11 +24,31 @@
  * The Route53 zone must already exists.
  *
  *
+ * ## Providers
+ *
+ * This module needs 3 providers:
+ *  * aws - default provider for resources
+ *  * aws.route53 - Where the route53 zone already exists
+ *  * aws.us-east-1 same account as `aws`, for acm certificate
+ *
+ *  This handle the use case where multiple aws accounts are used but it can be
+ *  the same provider.
+ *
  * ## Examples
  *
  * ### Simple
  *
  * ```hcl
+ *
+ * provider "aws" {
+ *   region = "eu-west-1"
+ * }
+ *
+ * provider "aws" {
+ *   alias  = "us-east-1"
+ *   region = "us-east-1"
+ * }
+ *
  * resource "aws_route53_zone" "my_website_com" {
  *   name = "my-website.com"
  * }
@@ -38,6 +58,12 @@
  *
  *   website_host = "example.my-website.com"
  *   dns_zone     = aws_route53_zone.my_website_com.name
+ *
+ *   providers = {
+ *     aws           = aws
+ *     aws.route53   = aws
+ *     aws.us-east-1 = aws.us-east-1
+ *   }
  * }
  * ```
  *
@@ -51,18 +77,20 @@
  *   website_host = "example.my-website.com"
  *   dns_zone     = "my-website.com"
  *   redirect_404 = true
+ *
+ *   providers = {
+ *     aws           = aws
+ *     aws.route53   = aws
+ *     aws.us-east-1 = aws.us-east-1
+ *   }
  * }
  * ```
  */
 
-
-provider "aws" {
-  alias  = "us-east-1"
-  region = "us-east-1"
-}
-
 data "aws_route53_zone" "zone" {
   name = var.dns_zone
+
+  provider = aws.route53
 }
 
 
@@ -90,7 +118,7 @@ resource "aws_route53_record" "cert_validation" {
   zone_id = data.aws_route53_zone.zone.zone_id
   ttl     = 60
 
-  provider = aws.us-east-1
+  provider = aws.route53
 }
 
 resource "aws_acm_certificate_validation" "cert" {
@@ -216,4 +244,6 @@ resource "aws_route53_record" "main" {
     zone_id                = aws_cloudfront_distribution.distribution.hosted_zone_id
     evaluate_target_health = true
   }
+
+  provider = aws.route53
 }

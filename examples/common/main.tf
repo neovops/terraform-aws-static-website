@@ -1,4 +1,4 @@
-module "static-webiste" {
+module "static-website" {
   source = "../../"
 
   website_host = "example.neovops.io"

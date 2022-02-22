@@ -105,8 +105,11 @@ resource "aws_acm_certificate_validation" "cert" {
 
 resource "aws_s3_bucket" "website" {
   bucket = var.website_host
-  acl    = "public-read"
+}
 
+resource "aws_s3_bucket_acl" "example" {
+  bucket = aws_s3_bucket.website.id
+  acl    = "public-read"
 }
 
 data "aws_iam_policy_document" "s3_policy" {

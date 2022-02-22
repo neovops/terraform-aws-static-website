@@ -53,15 +53,15 @@ module "static-website" {
 
 | Name | Version |
 |------|---------|
-| terraform | >= 0.14 |
-| aws | >= 3.30.0 |
+| terraform | >= 1.1.0 |
+| aws | >= 4.2.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| aws | >= 3.30.0 |
-| aws.us-east-1 | >= 3.30.0 |
+| aws | >= 4.2.0 |
+| aws.us-east-1 | >= 4.2.0 |
 
 ## Modules
 
@@ -79,6 +79,7 @@ No Modules.
 | [aws_route53_record](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/route53_record) |
 | [aws_route53_zone](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/route53_zone) |
 | [aws_s3_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) |
+| [aws_s3_bucket_acl](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_acl) |
 | [aws_s3_bucket_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_policy) |
 
 ## Inputs

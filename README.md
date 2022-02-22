@@ -29,7 +29,7 @@ resource "aws_route53_zone" "my_website_com" {
   name = "my-website.com"
 }
 
-module "static-webiste" {
+module "static-website" {
   source = "neovops/static-website/aws"
 
   website_host = "example.my-website.com"
@@ -40,7 +40,7 @@ module "static-webiste" {
 ### SPA Application
 
 ```hcl
-module "static-webiste" {
+module "static-website" {
   source = "neovops/static-website/aws"
 
   website_host = "example.my-website.com"

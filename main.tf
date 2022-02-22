@@ -33,7 +33,7 @@
  *   name = "my-website.com"
  * }
  *
- * module "static-webiste" {
+ * module "static-website" {
  *   source = "neovops/static-website/aws"
  *
  *   website_host = "example.my-website.com"
@@ -45,7 +45,7 @@
  * ### SPA Application
  *
  * ```hcl
- * module "static-webiste" {
+ * module "static-website" {
  *   source = "neovops/static-website/aws"
  *
  *   website_host = "example.my-website.com"

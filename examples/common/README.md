@@ -1,1 +1,1 @@
-# Common users example
+# Static website

@@ -85,6 +85,32 @@
  *   }
  * }
  * ```
+ *
+ * ### Basic Authentication
+ *
+ * ```hcl
+ * module "static-website" {
+ *   source = "neovops/static-website/aws"
+ *
+ *   website_host = "example.my-website.com"
+ *   dns_zone     = "my-website.com"
+ *   redirect_404 = true
+ *
+ *   enable_basic_auth = true
+ *
+ *   providers = {
+ *     aws           = aws
+ *     aws.route53   = aws
+ *     aws.us-east-1 = aws.us-east-1
+ *   }
+ * }
+ * ```
+ *
+ * It creates a lambda function that add basic authentication. The
+ * username / password is stored in AWS Secret Manager in the `us-east-1`
+ * region. The name of this secret is `"basic-auth/${var.website_host}"`. The
+ * initial password is generated randomly but can be changed directly in AWS
+ * Secret Manager.
  */
 
 data "aws_route53_zone" "zone" {
@@ -198,6 +224,15 @@ resource "aws_cloudfront_distribution" "distribution" {
       query_string = false
       cookies {
         forward = "none"
+      }
+    }
+
+    dynamic "lambda_function_association" {
+      for_each = var.enable_basic_auth ? [1] : []
+      content {
+        event_type   = "viewer-request"
+        lambda_arn   = aws_lambda_function.basic_auth.0.qualified_arn
+        include_body = false
       }
     }
   }

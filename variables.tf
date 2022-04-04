@@ -25,3 +25,15 @@ variable "redirect_404_object" {
   description = "Object for 404 redirect. Not used if `redirect_404` is false"
   default     = "/index.html"
 }
+
+variable "enable_basic_auth" {
+  type        = bool
+  description = "Enable basic authentication"
+  default     = false
+}
+
+variable "basic_auth_initial_username" {
+  type        = string
+  description = "Initial username for basic authentication"
+  default     = "admin"
+}

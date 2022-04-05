@@ -1,16 +1,29 @@
 # Lambda
 
+resource "random_password" "sign_secret" {
+  count = var.enable_basic_auth ? 1 : 0
+
+  length  = 20
+  special = false
+}
+
+
 data "archive_file" "basic_auth" {
   count = var.enable_basic_auth ? 1 : 0
 
   type        = "zip"
   output_path = "${path.module}/function/basic_auth.zip"
 
-  source {
-    content = templatefile("${path.module}/function/basic_auth.py", {
-      SECRET_NAME = aws_secretsmanager_secret.basic_auth.0.name
-    })
-    filename = "basic_auth.py"
+  dynamic "source" {
+    for_each = ["basic_auth.py", "credentials.py", "sessions.py"]
+
+    content {
+      content = templatefile("${path.module}/function/${source["value"]}", {
+        SECRET_NAME = aws_secretsmanager_secret.basic_auth.0.name
+        SIGN_SECRET = random_password.sign_secret.0.result
+      })
+      filename = source["value"]
+    }
   }
 }
 

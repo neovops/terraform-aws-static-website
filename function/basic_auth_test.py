@@ -1,7 +1,10 @@
 from base64 import b64encode
 from copy import deepcopy
 
-from basic_auth import BasicAuthHandler, StaticCredentialsValidator
+from basic_auth import BasicAuthHandler, COOKIE_NAME
+from credentials import StaticCredentialsValidator
+from sessions import Session
+
 
 TEST_USER = "test_user"
 TEST_PASSWORD = "test_password"
@@ -67,7 +70,7 @@ def test_invalid_auth_return_401() -> None:
     assert response["headers"]["www-authenticate"][0]["value"].startswith("Basic")
 
 
-def test_valid_auth_return_original_request() -> None:
+def test_valid_auth_return_set_valid_cookie() -> None:
     event = deepcopy(base_event)
     event["Records"][0]["cf"]["request"]["headers"]["authorization"] = [
         {
@@ -77,4 +80,36 @@ def test_valid_auth_return_original_request() -> None:
     ]
     response = test_basic_auth_handler.handle(event)
 
+    assert response["status"] == "302"
+    assert "set-cookie" in response["headers"]
+    assert response["headers"]["set-cookie"][0]["key"] == "Set-Cookie"
+    session_str = response["headers"]["set-cookie"][0]["value"].split("=")[1].strip()
+    assert Session().validate_session(session_str)
+
+
+def test_valid_cookie_return_original_request() -> None:
+    event = deepcopy(base_event)
+    session = Session().generate_session()
+    event["Records"][0]["cf"]["request"]["headers"]["cookie"] = [
+        {
+            "key": "Cookie",
+            "value": f"{COOKIE_NAME}={session}",
+        }
+    ]
+    response = test_basic_auth_handler.handle(event)
+
     assert response == event["Records"][0]["cf"]["request"]
+
+
+def test_parse_cookies() -> None:
+    event = deepcopy(base_event)
+    event["Records"][0]["cf"]["request"]["headers"]["cookie"] = [
+        {
+            "key": "Cookie",
+            "value": "First=1; Second=2",
+        }
+    ]
+    assert test_basic_auth_handler._parse_cookies(event) == {
+        "First": "1",
+        "Second": "2",
+    }

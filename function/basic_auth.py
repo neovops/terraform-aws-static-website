@@ -1,62 +1,51 @@
-from abc import ABC, abstractmethod
 from base64 import b64decode
-import json
 from typing import Any, Dict
 
-import boto3
-from botocore.exceptions import ClientError
+from credentials import CredentialsValidator, AWSSecretCredentialsValidator
+from sessions import Session
 
-
-class CredentialsValidator(ABC):
-    @abstractmethod
-    def validate(self, user: str, password: str) -> bool:
-        ...
-
-
-class StaticCredentialsValidator(CredentialsValidator):
-
-    _user: str
-    _password: str
-
-    def __init__(self, user: str, password: str) -> None:
-        self._user = user
-        self._password = password
-
-    def validate(self, user: str, password: str) -> bool:
-        return user == self._user and password == self._password
-
-
-class AWSSecretCredentialsValidator(CredentialsValidator):
-
-    _secret_name: str = "${SECRET_NAME}"  # will be replaced by terraform tpl
-
-    def __init__(self) -> None:
-        session = boto3.session.Session()
-        self._client = session.client(
-            service_name="secretsmanager",
-            region_name="us-east-1",
-        )
-
-    def validate(self, user: str, password: str) -> bool:
-        try:
-            credentials = json.loads(
-                self._client.get_secret_value(SecretId=self._secret_name)[
-                    "SecretString"
-                ]
-            )
-        except ClientError:
-            return False
-        return bool(credentials["user"] == user and credentials["password"] == password)
+COOKIE_NAME = "CFAUTH"
 
 
 class BasicAuthHandler:
 
     _credentials_validator: CredentialsValidator
+    _session: Session
 
     def __init__(self, credentials_validator: CredentialsValidator) -> None:
         self._credentials_validator = credentials_validator
+        self._session = Session()
+
+    @staticmethod
+    def _parse_cookies(event: Dict[str, Any]) -> Dict[str, str]:
+        try:
+            cookies = event["Records"][0]["cf"]["request"]["headers"]["cookie"][0][
+                "value"
+            ]
+            return {
+                cookie.split("=")[0].strip(): cookie.split("=")[1].strip()
+                for cookie in cookies.split(";")
+            }
+        except (KeyError, IndexError):
+            return {}
 
     def handle(self, event: Dict[str, Any]) -> Dict[str, Any]:
+        if self._have_valid_cookie(event):
+            return event["Records"][0]["cf"]["request"]
+        if self._have_valid_authorization_header(event):
+            return self._get_set_header_response(
+                self._session.generate_session(),
+                event["Records"][0]["cf"]["request"]["uri"],
+            )
+        return self._get_unauthorized_response()
+
+    def _have_valid_cookie(self, event: Dict[str, Any]) -> bool:
+        cookies = self._parse_cookies(event)
+        return COOKIE_NAME in cookies and self._session.validate_session(
+            cookies[COOKIE_NAME]
+        )
+
+    def _have_valid_authorization_header(self, event: Dict[str, Any]) -> bool:
         try:
             authorization = event["Records"][0]["cf"]["request"]["headers"][
                 "authorization"
@@ -66,12 +55,30 @@ class BasicAuthHandler:
                 b64decode(authorization_encoded).decode("utf8").split(":", 1)
             )
         except (KeyError, IndexError):
-            return self._get_unauthorized_response()
+            return False
 
-        if self._credentials_validator.validate(user, password):
-            return event["Records"][0]["cf"]["request"]
-        else:
-            return self._get_unauthorized_response()
+        return self._credentials_validator.validate(user, password)
+
+    @staticmethod
+    def _get_set_header_response(session: str, uri: str) -> Dict[str, Any]:
+        return {
+            "status": "302",
+            "statusDescription": "Found",
+            "headers": {
+                "location": [
+                    {
+                        "key": "Location",
+                        "value": uri,
+                    }
+                ],
+                "set-cookie": [
+                    {
+                        "key": "Set-Cookie",
+                        "value": f"{COOKIE_NAME}={session}",
+                    }
+                ],
+            },
+        }
 
     @staticmethod
     def _get_unauthorized_response() -> Dict[str, Any]:

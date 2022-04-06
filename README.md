@@ -167,4 +167,11 @@ No modules.
 
 ## Outputs
 
-No outputs.
+| Name | Description |
+|------|-------------|
+| <a name="output_basic_auth_secret_arn"></a> [basic\_auth\_secret\_arn](#output\_basic\_auth\_secret\_arn) | n/a |
+| <a name="output_basic_auth_secret_name"></a> [basic\_auth\_secret\_name](#output\_basic\_auth\_secret\_name) | n/a |
+| <a name="output_cloudfront_distribution_arn"></a> [cloudfront\_distribution\_arn](#output\_cloudfront\_distribution\_arn) | n/a |
+| <a name="output_cloudfront_distribution_id"></a> [cloudfront\_distribution\_id](#output\_cloudfront\_distribution\_id) | n/a |
+| <a name="output_s3_bucket_arn"></a> [s3\_bucket\_arn](#output\_s3\_bucket\_arn) | n/a |
+| <a name="output_s3_bucket_name"></a> [s3\_bucket\_name](#output\_s3\_bucket\_name) | n/a |

@@ -112,16 +112,16 @@ Secret Manager.
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.1.0 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 4.2 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | ~> 5.15 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
 | <a name="provider_archive"></a> [archive](#provider\_archive) | n/a |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 4.2 |
-| <a name="provider_aws.route53"></a> [aws.route53](#provider\_aws.route53) | ~> 4.2 |
-| <a name="provider_aws.us-east-1"></a> [aws.us-east-1](#provider\_aws.us-east-1) | ~> 4.2 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | ~> 5.15 |
+| <a name="provider_aws.route53"></a> [aws.route53](#provider\_aws.route53) | ~> 5.15 |
+| <a name="provider_aws.us-east-1"></a> [aws.us-east-1](#provider\_aws.us-east-1) | ~> 5.15 |
 | <a name="provider_random"></a> [random](#provider\_random) | n/a |
 
 ## Modules
